@@ -29,38 +29,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt || true
-        pip install Django pytest pytest-django
+        pip install Django pytest pytest-django xmlrunner
 
     # 4️⃣ Ejecutar tests de Django
-    # Generamos un reporte en formato JUnit XML compatible con Xray
+    # Genera un reporte XML compatible con JUnit
     - name: Run Django Tests
       run: |
         python manage.py test --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input --verbosity=2 --output-file report.xml
 
-    # 5️⃣ Subir reporte como artifact (para ver resultados en GitHub)
+    # 5️⃣ Subir reporte como artifact (opcional)
     - name: Upload Django test report
       uses: actions/upload-artifact@v4
       with:
         name: django-test-report
         path: report.xml
-
-    # 6️⃣ Enviar resultados a Jira Xray
-    - name: Upload report to Xray
-      if: always()  # corre aunque los tests fallen
-      env:
-        XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-        XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-      run: |
-        echo "🔐 Autenticando con Xray Cloud..."
-        token=$(curl -s -X POST https://xray.cloud.getxray.app/api/v2/authenticate \
-          -H "Content-Type: application/json" \
-          -d "{\"client_id\": \"${XRAY_CLIENT_ID}\", \"client_secret\": \"${XRAY_CLIENT_SECRET}\"}" | tr -d '"')
-
-        echo "📤 Subiendo resultados a Jira/Xray..."
-        curl -s -X POST https://xray.cloud.getxray.app/api/v2/import/execution/junit \
-          -H "Authorization: Bearer $token" \
-          -H "Content-Type: multipart/form-data" \
-          -F "file=@report.xml" \
-          -F "testExecKey=QAT-101"
-
-        echo "✅ Resultados enviados correctamente a Jira/Xray."
