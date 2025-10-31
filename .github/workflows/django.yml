@@ -12,8 +12,8 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.8, 3.9]  # 3.7 suele dar problemas, se recomienda usar 3.8+
-    
+        python-version: [3.8, 3.9]
+
     steps:
     # 1️⃣ Clonar el repositorio
     - uses: actions/checkout@v4
@@ -24,8 +24,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # 3️⃣ Instalar dependencias
-    - name: Install Dependencies
+    # 3️⃣ Instalar dependencias del backend
+    - name: Install Backend Dependencies
+      working-directory: parking_system
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt || true
@@ -33,6 +34,7 @@ jobs:
 
     # 4️⃣ Ejecutar tests de Django
     - name: Run Django Tests
+      working-directory: parking_system
       run: |
         python manage.py test --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input --verbosity=2 --output-file report.xml
 
@@ -41,4 +43,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: django-test-report
-        path: report.xml
+        path: parking_system/report.xml
