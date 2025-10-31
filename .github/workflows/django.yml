@@ -32,7 +32,7 @@ jobs:
         # Instala todo lo que esté en requirements.txt, si existe
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         # Dependencias adicionales que suelen faltar en proyectos Django
-        pip install Django pytest pytest-django xmlrunner django-cors-headers
+        pip install Django pytest pytest-django xmlrunner django-cors-headers psycopg2-binary
 
     # 4️⃣ Ejecutar tests de Django
     - name: Run Django Tests
