@@ -12,8 +12,8 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7, 3.8, 3.9]
-
+        python-version: [3.8, 3.9]  # 3.7 suele dar problemas, se recomienda usar 3.8+
+    
     steps:
     # 1️⃣ Clonar el repositorio
     - uses: actions/checkout@v4
@@ -32,12 +32,11 @@ jobs:
         pip install Django pytest pytest-django xmlrunner
 
     # 4️⃣ Ejecutar tests de Django
-    # Genera un reporte XML compatible con JUnit
     - name: Run Django Tests
       run: |
         python manage.py test --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input --verbosity=2 --output-file report.xml
 
-    # 5️⃣ Subir reporte como artifact (opcional)
+    # 5️⃣ Subir reporte como artifact
     - name: Upload Django test report
       uses: actions/upload-artifact@v4
       with:
