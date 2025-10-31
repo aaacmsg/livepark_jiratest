@@ -29,14 +29,18 @@ jobs:
       working-directory: parking_system
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt || true
-        pip install Django pytest pytest-django xmlrunner
+        # Instala todo lo que esté en requirements.txt
+        pip install -r requirements.txt
+        # Dependencias adicionales que suelen faltar en proyectos Django
+        pip install Django pytest pytest-django xmlrunner django-cors-headers
 
     # 4️⃣ Ejecutar tests de Django
     - name: Run Django Tests
       working-directory: parking_system
       run: |
-        python manage.py test --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input --verbosity=2 --output-file report.xml
+        python manage.py test \
+        --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
+        --no-input --verbosity=2 --output-file report.xml
 
     # 5️⃣ Subir reporte como artifact
     - name: Upload Django test report
