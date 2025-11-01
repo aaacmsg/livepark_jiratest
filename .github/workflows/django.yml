@@ -29,23 +29,18 @@ jobs:
       working-directory: parking_system
       run: |
         python -m pip install --upgrade pip
-        # Instala todo lo que esté en requirements.txt, si existe
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # Dependencias adicionales necesarias
-        pip install Django pytest pytest-django xmlrunner unittest-xml-reporting django-cors-headers psycopg2-binary
+        pip install Django pytest pytest-django django-cors-headers psycopg2-binary unittest-xml-reporting
 
-    # 4️⃣ Ejecutar tests de Django
+    # 4️⃣ Ejecutar tests de Django (sin --output-file)
     - name: Run Django Tests
       working-directory: parking_system
       run: |
-        python manage.py test \
-        --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
-        --no-input --verbosity=2 \
-        --output-file report.xml
+        python manage.py test --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input --verbosity=2
 
-    # 5️⃣ Subir reporte como artifact
+    # 5️⃣ Subir reportes XML como artifact
     - name: Upload Django test report
       uses: actions/upload-artifact@v4
       with:
         name: django-test-report
-        path: parking_system/report.xml
+        path: parking_system/test-reports/
