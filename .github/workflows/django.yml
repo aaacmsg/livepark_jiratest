@@ -24,7 +24,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # 3️⃣ Instalar dependencias del backend
+    # 3️⃣ Instalar dependencias
     - name: Install Backend Dependencies
       working-directory: parking_system
       run: |
@@ -32,7 +32,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install Django pytest pytest-django django-cors-headers psycopg2-binary unittest-xml-reporting django-ninja
 
-    # 4️⃣ Ejecutar tests de Django, ahora con --output-dir test-reports
+    # 4️⃣ Ejecutar tests de Django con XML correcto
     - name: Run Django Tests
       working-directory: parking_system
       run: |
@@ -40,14 +40,14 @@ jobs:
           --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
           --no-input \
           --verbosity=2 \
-          --output-dir test-reports
+          --xml-output test-reports
 
-    # (Opcional) Mostrar estructura para debug
+    # 5️⃣ Listar directorios (debug opcional)
     - name: List test report directory
       working-directory: parking_system
       run: ls -R .
 
-    # 5️⃣ Subir reportes XML como artifact
+    # 6️⃣ Subir reportes XML
     - name: Upload Django test report
       uses: actions/upload-artifact@v4
       with:
