@@ -15,16 +15,13 @@ jobs:
         python-version: [3.8, 3.9]
 
     steps:
-    # 1️⃣ Clonar el repositorio
     - uses: actions/checkout@v4
 
-    # 2️⃣ Configurar Python
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
 
-    # 3️⃣ Instalar dependencias
     - name: Install Backend Dependencies
       working-directory: parking_system
       run: |
@@ -32,22 +29,15 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install Django pytest pytest-django django-cors-headers psycopg2-binary unittest-xml-reporting django-ninja
 
-    # 4️⃣ Ejecutar tests de Django con XML correcto
     - name: Run Django Tests
       working-directory: parking_system
       run: |
-        python manage.py test \
-          --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
-          --no-input \
-          --verbosity=2 \
-          --xml-output test-reports
+        python manage.py test --no-input --verbosity=2
 
-    # 5️⃣ Listar directorios (debug opcional)
     - name: List test report directory
       working-directory: parking_system
       run: ls -R .
 
-    # 6️⃣ Subir reportes XML
     - name: Upload Django test report
       uses: actions/upload-artifact@v4
       with:
